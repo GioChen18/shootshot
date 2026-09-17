@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SEVENTEEN 排名對決</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Noto+Serif+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#F4B9C2;
+    --rose-deep:#E8637B;
+    --serenity:#9FB8DB;
+    --serenity-deep:#5E86B8;
+    --ink:#241F26;
+    --ink-soft:#5B535E;
+    --paper:#FFF9F7;
+    --panel:#FFFFFF;
+    --line:#EBDEE2;
+    --gold:#DDA23F;
+    --up:#3E8E5B;
+    --down:#C4536B;
+    --radius:14px;
+    --maxw:560px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F4EEF0;
+      --ink-soft:#B9AFB6;
+      --paper:#1C1720;
+      --panel:#26202B;
+      --line:#3A2F3B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F4EEF0;
+    --ink-soft:#B9AFB6;
+    --paper:#1C1720;
+    --panel:#26202B;
+    --line:#3A2F3B;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Serif TC',-apple-system,serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+    min-height:100vh;
+    padding-bottom:74px;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* ---------- Hero / Header ---------- */
+  .hero{
+    background:linear-gradient(120deg,var(--rose) 0%,var(--rose) 38%,var(--serenity) 100%);
+    padding:34px 0 26px;
+    margin-bottom:22px;
+  }
+  .hero .wrap{display:flex;flex-direction:column;gap:4px;}
+  .hero .eyebrow{
+    font-size:13px;
+    color:rgba(36,31,38,.62);
+    letter-spacing:.02em;
+  }
+  .hero h1{
+    font-size:30px;
+    line-height:1.15;
+    color:var(--ink);
+  }
+  .hero .sub{
+    font-size:14px;
+    color:rgba(36,31,38,.7);
+    margin-top:2px;
+  }
+
+  .section-title{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin:26px 0 10px;
+  }
+
+  /* ---------- Cards / lists ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .rank-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .rank-row:last-child{border-bottom:none;}
+  .rank-num{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:600;
+    width:30px;
+    text-align:center;
+    color:var(--ink-soft);
+    flex-shrink:0;
+  }
+  .rank-row:nth-child(1) .rank-num{color:var(--gold);font-size:26px;}
+  .swatch{
+    width:10px;height:34px;border-radius:5px;flex-shrink:0;
+  }
+  .rank-name{
+    flex:1;
+    font-size:16px;
+    font-weight:500;
+  }
+  .rank-meta{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .diff{
+    font-size:13px;
+    font-weight:700;
+    min-width:34px;
+    text-align:right;
+  }
+  .diff.up{color:var(--up);}
+  .diff.down{color:var(--down);}
+  .diff.same{color:var(--ink-soft);font-weight:400;}
+
+  .score-bar-track{
+    background:var(--line);
+    height:6px;
+    border-radius:3px;
+    margin-top:4px;
+    overflow:hidden;
+  }
+  .score-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--rose-deep),var(--serenity-deep));
+  }
+
+  .friend-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(72px,1fr));
+    gap:7px;
+  }
+  .friend-chip{
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:9px 4px 8px;
+    text-align:center;
+  }
+  .friend-chip.active{
+    border-color:var(--serenity-deep);
+    background:linear-gradient(160deg, rgba(244,185,194,.18), rgba(159,184,219,.18));
+  }
+  .friend-chip .fc-name{
+    font-family:'Fraunces',serif;font-weight:600;font-size:13px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .friend-chip .fc-date{font-size:9px;color:var(--ink-soft);margin-top:3px;}
+
+  .bias-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+  .bias-square{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 8px;
+    text-align:center;
+  }
+  .bias-square .bs-name{
+    font-family:'Fraunces',serif;font-weight:600;font-size:14px;
+    margin-bottom:5px;
+  }
+  .bias-square .bs-count{font-size:11px;color:var(--ink-soft);margin-bottom:5px;}
+  .bias-square .bs-carats{font-size:11px;color:var(--ink-soft);line-height:1.4;word-break:break-word;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:14px;
+    border-radius:12px;
+    border:none;
+    font-size:16px;
+    font-weight:600;
+    background:var(--ink);
+    color:#fff;
+  }
+  .btn.secondary{
+    background:transparent;
+    border:1.5px solid var(--line);
+    color:var(--ink);
+  }
+  .btn:disabled{opacity:.4;}
+  .btn-row{display:flex;gap:10px;}
+  .btn-row .btn{flex:1;}
+
+  input[type=text], input[type=date]{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    font-size:16px;
+    font-family:inherit;
+    background:var(--panel);
+    color:var(--ink);
+  }
+  label.field-label{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    display:block;
+  }
+  .field{margin-bottom:16px;}
+
+  .empty{
+    padding:34px 16px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  .tabbar{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:var(--panel);
+    border-top:1px solid var(--line);
+    display:flex;
+    z-index:50;
+  }
+  .tabbar button{
+    flex:1;
+    background:none;
+    border:none;
+    padding:10px 2px 12px;
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+  .tabbar button .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:transparent;
+  }
+  .tabbar button.active{color:var(--ink);font-weight:700;}
+  .tabbar button.active .dot{background:linear-gradient(90deg,var(--rose-deep),var(--serenity-deep));}
+
+  /* ---------- Battle screen ---------- */
+  .battle-wrap{
+    position:fixed;inset:0;
+    background:var(--paper);
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+  }
+  .battle-top{
+    padding:16px 18px 10px;
+  }
+  .battle-progress-track{
+    height:5px;background:var(--line);border-radius:3px;overflow:hidden;
+  }
+  .battle-progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--rose-deep),var(--serenity-deep));
+    transition:width .25s ease;
+  }
+  .battle-hint{
+    text-align:center;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:14px 0 6px;
+  }
+  .battle-close{
+    background:none;border:none;color:var(--ink-soft);font-size:14px;
+    align-self:flex-end;padding:4px 8px;
+  }
+  .battle-cards{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    padding:6px 18px 24px;
+  }
+  .fight-card{
+    flex:1;
+    border:none;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .fight-card .fc-name{
+    font-family:'Fraunces',serif;
+    font-size:clamp(30px,9vw,44px);
+    font-weight:600;
+    color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.18);
+    letter-spacing:.01em;
+    z-index:2;
+  }
+  .fight-card::after{
+    content:'';
+    position:absolute;inset:0;
+    background:rgba(0,0,0,0);
+    transition:background .15s ease;
+  }
+  .fight-card:active::after{background:rgba(0,0,0,.08);}
+  .vs-mark{
+    align-self:center;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:15px;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  /* ---------- Reorder (import) ---------- */
+  .reorder-row{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;border-bottom:1px solid var(--line);
+    position:relative;
+    background:var(--panel);
+    touch-action:pan-y;
+  }
+  .reorder-row:last-child{border-bottom:none;}
+  .reorder-row.dragging{
+    z-index:20;
+    box-shadow:0 6px 18px rgba(36,31,38,.16);
+    border-radius:10px;
+  }
+  .reorder-pos{
+    font-family:'Fraunces',serif;font-size:18px;color:var(--ink-soft);width:24px;
+  }
+  .reorder-name{flex:1;font-size:15px;font-weight:500;}
+  .drag-handle{
+    width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:var(--ink-soft);
+    cursor:grab;
+    touch-action:none;
+    flex-shrink:0;
+  }
+  .drag-handle:active{cursor:grabbing;}
+
+  select.hist-select{
+    width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);
+    font-size:14px;font-family:inherit;background:var(--panel);margin-bottom:10px;
+  }
+
+  .toast{
+    position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
+    font-size:13px;z-index:200;opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="tabbar" id="tabbar">
+  <button data-tab="home"><span class="dot"></span>克拉島</button>
+  <button data-tab="rank"><span class="dot"></span>開始排名</button>
+  <button data-tab="mine"><span class="dot"></span>我的檔案</button>
+  <button data-tab="import"><span class="dot"></span>匯入資料</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 資料 ============ */
+const ROSTER = [
+  {id:'scoups',    name:'🍒 S.Coups'},
+  {id:'jeonghan',  name:'🐰 Jeonghan'},
+  {id:'joshua',    name:'🦌 Joshua'},
+  {id:'jun',       name:'🐱 Jun'},
+  {id:'hoshi',     name:'🐯 Hoshi'},
+  {id:'wonwoo',    name:'🐈 Wonwoo'},
+  {id:'woozi',     name:'🍚 Woozi'},
+  {id:'dk',        name:'🍕 DK'},
+  {id:'mingyu',    name:'🐶 Mingyu'},
+  {id:'the8',      name:'🐸 The8'},
+  {id:'seungkwan', name:'🍊 Seungkwan'},
+  {id:'vernon',    name:'🐻‍❄️ Vernon'},
+  {id:'dino',      name:'🦖 Dino'},
+];
+const PALETTE = ['#E8637B','#EE8AA0','#F4B0BC','#F6C9CE','#E7B8C4','#D7AFC9','#C1A8CE','#A6A3D1','#8FA4D4','#8AB2DA','#8FC2DE','#9ED4DD','#B7E1DC'];
+const COLOR = {}; const NAME = {};
+ROSTER.forEach((m,i)=>{COLOR[m.id]=PALETTE[i];NAME[m.id]=m.name;});
+const IDS = ROSTER.map(m=>m.id);
+
+const SEED = {
+  celeste: [
+    {dateLabel:'2025.08',    dateKey:'2025-08-01', ranking:['dk','woozi','hoshi','jeonghan','mingyu','wonwoo','seungkwan','joshua','scoups','vernon','dino','jun','the8']},
+    {dateLabel:'2026.07.06', dateKey:'2026-07-06', ranking:['dk','woozi','jeonghan','hoshi','seungkwan','mingyu','wonwoo','dino','scoups','vernon','joshua','jun','the8']},
+    {dateLabel:'2026.08.22', dateKey:'2026-08-22', ranking:['dk','woozi','jeonghan','hoshi','seungkwan','dino','wonwoo','mingyu','scoups','vernon','joshua','jun','the8']},
+  ],
+  gio: [
+    {dateLabel:'2024.10',    dateKey:'2024-10-01', ranking:['scoups','hoshi','mingyu','wonwoo','jeonghan','woozi','seungkwan','dk','joshua','vernon','dino','the8','jun']},
+    {dateLabel:'2025.08',    dateKey:'2025-08-01', ranking:['scoups','hoshi','mingyu','woozi','jeonghan','seungkwan','wonwoo','vernon','dino','joshua','dk','jun','the8']},
+    {dateLabel:'2026.07.06', dateKey:'2026-07-06', ranking:['scoups','hoshi','mingyu','jeonghan','wonwoo','seungkwan','woozi','vernon','dino','dk','joshua','jun','the8']},
+  ],
+};
+
+/* ============ Storage helpers (local, per-device) ============ */
+function loadStore(){
+  try{
+    const raw = localStorage.getItem('str_store');
+    if(!raw) return {records:{}, seeded:false};
+    const parsed = JSON.parse(raw);
+    if(!parsed || typeof parsed!=='object') return {records:{}, seeded:false};
+    if(!parsed.records || typeof parsed.records!=='object') parsed.records={};
+    return parsed;
+  }catch(e){ return {records:{}, seeded:false}; }
+}
+function saveStore(store){
+  try{ localStorage.setItem('str_store', JSON.stringify(store)); return true; }
+  catch(e){ return false; }
+}
+async function listNicknames(){
+  const store = loadStore();
+  return Object.keys(store.records).filter(n=>store.records[n] && store.records[n].length);
+}
+async function getRecords(nick){
+  if(!nick) return [];
+  const store = loadStore();
+  return store.records[nick] ? [...store.records[nick]] : [];
+}
+async function saveRecordFor(nick, record){
+  const store = loadStore();
+  const list = store.records[nick] ? [...store.records[nick]] : [];
+  list.push(record);
+  list.sort((a,b)=> a.dateKey < b.dateKey ? -1 : 1);
+  store.records[nick] = list;
+  saveStore(store);
+  return list;
+}
+async function deleteRecordFor(nick, dateKey){
+  const store = loadStore();
+  const list = (store.records[nick]||[]).filter(r=>r.dateKey!==dateKey);
+  store.records[nick] = list;
+  saveStore(store);
+}
+async function updateRecordDateFor(nick, oldDateKey, newDateKey){
+  const store = loadStore();
+  const list = store.records[nick] ? [...store.records[nick]] : [];
+  const idx = list.findIndex(r=>r.dateKey===oldDateKey);
+  if(idx<0) return false;
+  list[idx] = {...list[idx], dateKey:newDateKey, dateLabel:toLabel(newDateKey)};
+  list.sort((a,b)=> a.dateKey < b.dateKey ? -1 : 1);
+  store.records[nick] = list;
+  saveStore(store);
+  return true;
+}
+async function ensureSeed(){
+  const store = loadStore();
+  if(store.seeded) return;
+  store.records['celeste'] = SEED.celeste;
+  store.records['gio'] = SEED.gio;
+  store.seeded = true;
+  saveStore(store);
+}
+function myNickname(){
+  try{ return normalizeNick(localStorage.getItem('str_nickname') || ''); }catch(e){ return ''; }
+}
+function setMyNickname(n){
+  try{ localStorage.setItem('str_nickname', normalizeNick(n)); }catch(e){}
+}
+function normalizeNick(s){
+  return (s||'').trim().toLowerCase();
+}
+async function migrateNicknameCasing(){
+  const store = loadStore();
+  const groups = {};
+  Object.keys(store.records).forEach(nick=>{
+    const lower = normalizeNick(nick);
+    if(!groups[lower]) groups[lower]=[];
+    groups[lower].push(nick);
+  });
+  let changed=false;
+  for(const lower in groups){
+    const variants = groups[lower];
+    if(variants.length===1 && variants[0]===lower) continue;
+    let merged=[];
+    variants.forEach(v=>{ merged = merged.concat(store.records[v]||[]); });
+    merged.sort((a,b)=> a.dateKey<b.dateKey?-1:1);
+    const seen=new Set(); const deduped=[];
+    merged.forEach(rec=>{
+      if(seen.has(rec.dateKey)) return;
+      seen.add(rec.dateKey); deduped.push(rec);
+    });
+    variants.forEach(v=>{ if(v!==lower) delete store.records[v]; });
+    store.records[lower] = deduped;
+    changed = true;
+  }
+  if(changed) saveStore(store);
+}
+
+/* ============ Toast ============ */
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ============ Router ============ */
+let currentTab='home';
+let battleState=null;
+
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('#tabbar button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab===tab);
+  });
+  render();
+}
+document.getElementById('tabbar').addEventListener('click', e=>{
+  const b=e.target.closest('button[data-tab]');
+  if(b) setTab(b.dataset.tab);
+});
+
+function todayKey(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function toLabel(key){ return key.replaceAll('-','.'); }
+
+/* ============ Render dispatch ============ */
+async function render(){
+  const app=document.getElementById('app');
+  if(currentTab==='home') app.innerHTML = await renderHome();
+  else if(currentTab==='rank') app.innerHTML = await renderRankEntry();
+  else if(currentTab==='mine') app.innerHTML = await renderProfile();
+  else if(currentTab==='import') app.innerHTML = await renderImport();
+  bindDynamic();
+}
+
+/* ============ HOME ============ */
+let homeSelectedNick = null;
+let homeSelectedDateIdx = null;
+
+async function renderHome(){
+  const nicks = await listNicknames();
+  const entries = [];
+  for(const n of nicks){
+    const recs = await getRecords(n);
+    if(!recs.length) continue;
+    const latest = recs[recs.length-1];
+    const prev = recs.length>1 ? recs[recs.length-2] : null;
+    entries.push({nick:n, recs, latest, prev});
+  }
+  const participants = entries.length;
+
+  function groupByPos(pos){
+    const map={};
+    entries.forEach(({nick,latest})=>{
+      const id=latest.ranking[pos];
+      if(!map[id]) map[id]=[];
+      map[id].push(nick);
+    });
+    return Object.entries(map)
+      .map(([id,list])=>({id,list}))
+      .sort((a,b)=>b.list.length-a.list.length);
+  }
+  function biasPanel(list){
+    if(!list.length) return `<div class="panel"><div class="empty">尚無資料</div></div>`;
+    return `<div class="bias-grid">${list.map(({id,list:carats})=>`
+      <div class="bias-square">
+        <div class="bs-name">${NAME[id]}</div>
+        <div class="bs-count">${carats.length} 人</div>
+        <div class="bs-carats">${carats.join('、')}</div>
+      </div>`).join('')}</div>`;
+  }
+
+  let bodyHtml;
+  if(participants===0){
+    bodyHtml = `<div class="panel"><div class="empty">目前還沒有任何排名紀錄<br>點上方「今天的你也變心了嗎」建立第一筆吧</div></div>`;
+  }else{
+    const mainBias = groupByPos(0);
+    const subBias = groupByPos(1);
+
+    if(!entries.find(e=>e.nick===homeSelectedNick)) homeSelectedNick = entries[0].nick;
+    const selected = entries.find(e=>e.nick===homeSelectedNick);
+    if(homeSelectedDateIdx==null || homeSelectedDateIdx>=selected.recs.length){
+      homeSelectedDateIdx = selected.recs.length-1;
+    }
+    const nickOptions = entries.map(e=>`<option value="${e.nick}" ${e.nick===homeSelectedNick?'selected':''}>${e.nick}</option>`).join('');
+    const dateOptions = selected.recs.map((r,i)=>`<option value="${i}" ${i===homeSelectedDateIdx?'selected':''}>${r.dateLabel}</option>`).join('');
+    const record = selected.recs[homeSelectedDateIdx];
+    const prevRecord = homeSelectedDateIdx>0 ? selected.recs[homeSelectedDateIdx-1] : null;
+
+    bodyHtml = `
+      <div class="section-title">主擔</div>
+      ${biasPanel(mainBias)}
+      <div class="section-title">副擔</div>
+      ${biasPanel(subBias)}
+      <div style="height:8px"></div>
+      <div class="section-title">好友排名</div>
+      <div class="field">
+        <label class="field-label">好友</label>
+        <select class="hist-select" id="homeFriendSelect">${nickOptions}</select>
+      </div>
+      <div class="field">
+        <label class="field-label">日期</label>
+        <select class="hist-select" id="homeDateSelect">${dateOptions}</select>
+      </div>
+      <div class="panel">${renderRecordRows(record, prevRecord)}</div>
+    `;
+  }
+
+  return `
+    <div class="hero">
+      <div class="wrap">
+        <div class="eyebrow">克拉島民の</div>
+        <h1>SEVENTEEN 排名</h1>
+      </div>
+    </div>
+    <div class="wrap">
+      <button class="btn" id="goRankBtn">今天的你也變心了嗎</button>
+      <div style="height:22px"></div>
+      ${bodyHtml}
+    </div>
+  `;
+}
+
+/* ============ RANK ENTRY ============ */
+async function renderRankEntry(){
+  const nick = myNickname();
+  if(!nick){
+    return `
+      <div class="hero"><div class="wrap">
+        <div class="eyebrow">又心動了！</div>
+        <h1>今天最喜歡的男偶像是誰呢？</h1>
+      </div></div>
+      <div class="wrap">
+        <div class="empty">請先到「我的檔案」設定你的暱稱</div>
+        <div style="height:10px"></div>
+        <button class="btn" id="goProfileBtn">前往我的檔案</button>
+      </div>
+    `;
+  }
+  return `
+    <div class="hero">
+      <div class="wrap">
+        <div class="eyebrow">又心動了！</div>
+        <h1>今天最喜歡的男偶像是誰呢？</h1>
+        <div class="sub">${nick} · 每次只能選一位，雖然很難，但還是要做出抉擇！</div>
+      </div>
+    </div>
+    <div class="wrap">
+      <button class="btn" id="startBattleBtn">START</button>
+      <div style="height:8px"></div>
+      <div style="font-size:12px;color:var(--ink-soft);text-align:center">共 13 位成員,大約需要比較 30~40 次</div>
+    </div>
+  `;
+}
+
+/* ============ PROFILE (nickname + my records) ============ */
+async function renderProfile(){
+  const nick = myNickname();
+  const nickField = `
+    <div class="field">
+      <label class="field-label">你的暱稱</label>
+      <input type="text" id="profileNickInput" placeholder="輸入暱稱" value="${nick}">
+    </div>
+    <button class="btn" id="saveNickBtn">儲存暱稱</button>
+  `;
+  if(!nick){
+    return `
+      <div class="hero"><div class="wrap">
+        <div class="eyebrow">個人設定</div><h1>我的檔案</h1>
+        <div class="sub">設定暱稱後就能開始排名、查看紀錄</div>
+      </div></div>
+      <div class="wrap">${nickField}</div>
+    `;
+  }
+  const recs = await getRecords(nick);
+  let historyHtml;
+  if(!recs.length){
+    historyHtml = `<div class="panel"><div class="empty">還沒有排名紀錄,去「開始排名」建立第一筆吧</div></div>`;
+  }else{
+    const options = recs.map((r,i)=>`<option value="${i}" ${i===recs.length-1?'selected':''}>${r.dateLabel}</option>`).join('');
+    historyHtml = `
+      <select class="hist-select" id="mineSelect">${options}</select>
+      <div class="panel" id="mineDetail"></div>
+      <div style="height:10px"></div>
+      <div class="btn-row">
+        <button class="btn secondary" id="editDateBtn">編輯日期</button>
+        <button class="btn secondary" id="deleteRecordBtn" style="color:var(--down);border-color:var(--down)">刪除這筆</button>
+      </div>
+      <div class="field" id="editDateField" style="margin-top:12px;display:none">
+        <label class="field-label">新日期</label>
+        <input type="date" id="editDateInput">
+        <div style="height:8px"></div>
+        <button class="btn" id="confirmEditDateBtn">更新日期</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="hero"><div class="wrap">
+      <div class="eyebrow">個人設定</div><h1>我的檔案</h1>
+      <div class="sub">${nick} · 共 ${recs.length} 筆紀錄</div>
+    </div></div>
+    <div class="wrap">
+      ${nickField}
+      <div style="height:24px"></div>
+      <div class="section-title">我的紀錄</div>
+      ${historyHtml}
+    </div>
+  `;
+}
+
+function renderRecordRows(record, prevRecord){
+  let prevIndex=null;
+  if(prevRecord){
+    prevIndex={};
+    prevRecord.ranking.forEach((id,idx)=>{prevIndex[id]=idx;});
+  }
+  return record.ranking.map((id,idx)=>{
+    let diffHtml = `<div class="diff same">首次</div>`;
+    if(prevIndex && id in prevIndex){
+      const delta = prevIndex[id]-idx;
+      if(delta>0) diffHtml = `<div class="diff up">▲${delta}</div>`;
+      else if(delta<0) diffHtml = `<div class="diff down">▼${Math.abs(delta)}</div>`;
+      else diffHtml = `<div class="diff same">—</div>`;
+    }
+    return `
+      <div class="rank-row">
+        <div class="rank-num">${idx+1}</div>
+        <div class="swatch" style="background:${COLOR[id]}"></div>
+        <div class="rank-name" style="flex:1">${NAME[id]}</div>
+        ${diffHtml}
+      </div>`;
+  }).join('');
+}
+
+/* ============ IMPORT ============ */
+let importOrder = [...IDS];
+function buildReorderRowsHtml(){
+  return importOrder.map((id,idx)=>`
+    <div class="reorder-row" data-id="${id}">
+      <div class="reorder-pos">${idx+1}</div>
+      <div class="swatch" style="background:${COLOR[id]}"></div>
+      <div class="reorder-name">${NAME[id]}</div>
+      <div class="drag-handle" data-id="${id}">⠿</div>
+    </div>`).join('');
+}
+
+/* ---- drag to reorder ---- */
+let importDrag = null; // {id, startY, rowH, currentIndex}
+let reorderDragBound = false;
+function setupReorderDragOnce(){
+  if(reorderDragBound) return;
+  reorderDragBound = true;
+
+  document.addEventListener('pointerdown', e=>{
+    const handle = e.target.closest('.drag-handle');
+    if(!handle) return;
+    const panel = document.getElementById('reorderPanel');
+    if(!panel || !panel.contains(handle)) return;
+    e.preventDefault();
+    const row = handle.closest('.reorder-row');
+    const id = row.dataset.id;
+    const rowH = row.getBoundingClientRect().height;
+    importDrag = {id, startY:e.clientY, rowH, currentIndex: importOrder.indexOf(id)};
+    row.classList.add('dragging');
+  });
+
+  document.addEventListener('pointermove', e=>{
+    if(!importDrag) return;
+    const panel = document.getElementById('reorderPanel');
+    if(!panel) return;
+    const row = panel.querySelector(`.reorder-row[data-id="${importDrag.id}"]`);
+    if(!row) return;
+    const deltaY = e.clientY - importDrag.startY;
+    row.style.transform = `translateY(${deltaY}px)`;
+    const newIndex = Math.max(0, Math.min(importOrder.length-1, importDrag.currentIndex + Math.round(deltaY/importDrag.rowH)));
+    if(newIndex !== importDrag.currentIndex){
+      const idx = importOrder.indexOf(importDrag.id);
+      importOrder.splice(idx,1);
+      importOrder.splice(newIndex,0,importDrag.id);
+      importDrag.currentIndex = newIndex;
+      importDrag.startY = e.clientY;
+      panel.innerHTML = buildReorderRowsHtml();
+      const newRow = panel.querySelector(`.reorder-row[data-id="${importDrag.id}"]`);
+      if(newRow) newRow.classList.add('dragging');
+    }
+  });
+
+  function endDrag(){
+    if(!importDrag) return;
+    const panel = document.getElementById('reorderPanel');
+    if(panel){
+      const row = panel.querySelector(`.reorder-row[data-id="${importDrag.id}"]`);
+      if(row){ row.classList.remove('dragging'); row.style.transform=''; }
+    }
+    importDrag = null;
+  }
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+}
+async function renderImport(){
+  const nicks = await listNicknames();
+  const nickListHtml = nicks.map(n=>`<option value="${n}">${n}</option>`).join('');
+  return `
+    <div class="hero"><div class="wrap">
+      <div class="eyebrow">補上舊資料</div><h1>匯入排名紀錄</h1>
+      <div class="sub">手動輸入某一次的完整排序</div>
+    </div></div>
+    <div class="wrap">
+      <div class="field">
+        <label class="field-label">暱稱</label>
+        <input type="text" id="importNick" list="nickOptions" placeholder="輸入暱稱(新舊皆可)" value="${myNickname()}">
+        <datalist id="nickOptions">${nickListHtml}</datalist>
+      </div>
+      <div class="field">
+        <label class="field-label">日期</label>
+        <input type="date" id="importDate" value="${todayKey()}">
+      </div>
+      <label class="field-label">按住右側 ⠿ 拖曳排序(由上到下 = 由喜歡到不喜歡)</label>
+      <div class="panel" id="reorderPanel">${buildReorderRowsHtml()}</div>
+      <div style="height:14px"></div>
+      <button class="btn" id="saveImportBtn">儲存這筆紀錄</button>
+    </div>
+  `;
+}
+
+/* ============ Dynamic bindings ============ */
+function bindDynamic(){
+  const goRankBtn=document.getElementById('goRankBtn');
+  if(goRankBtn) goRankBtn.addEventListener('click', ()=>setTab('rank'));
+
+  const homeFriendSelect=document.getElementById('homeFriendSelect');
+  if(homeFriendSelect){
+    homeFriendSelect.addEventListener('change', ()=>{
+      homeSelectedNick = homeFriendSelect.value;
+      homeSelectedDateIdx = null;
+      render();
+    });
+  }
+  const homeDateSelect=document.getElementById('homeDateSelect');
+  if(homeDateSelect){
+    homeDateSelect.addEventListener('change', ()=>{
+      homeSelectedDateIdx = parseInt(homeDateSelect.value,10);
+      render();
+    });
+  }
+
+  const goProfileBtn=document.getElementById('goProfileBtn');
+  if(goProfileBtn) goProfileBtn.addEventListener('click', ()=>setTab('mine'));
+
+  const startBattleBtn=document.getElementById('startBattleBtn');
+  if(startBattleBtn){
+    startBattleBtn.addEventListener('click', ()=>{
+      const nick=myNickname();
+      if(!nick){ toast('請先設定暱稱'); return; }
+      openBattle(nick);
+    });
+  }
+
+  const saveNickBtn=document.getElementById('saveNickBtn');
+  if(saveNickBtn){
+    saveNickBtn.addEventListener('click', ()=>{
+      const n=normalizeNick(document.getElementById('profileNickInput').value);
+      if(!n){ toast('請輸入暱稱'); return; }
+      setMyNickname(n);
+      toast('已儲存暱稱');
+      render();
+    });
+  }
+
+  const mineSelect=document.getElementById('mineSelect');
+  if(mineSelect){
+    const fill=async()=>{
+      const nick=myNickname();
+      const recs=await getRecords(nick);
+      const i=parseInt(mineSelect.value,10);
+      const record=recs[i];
+      if(!record) return;
+      const prev=i>0?recs[i-1]:null;
+      document.getElementById('mineDetail').innerHTML = renderRecordRows(record, prev);
+      const editInput=document.getElementById('editDateInput');
+      if(editInput) editInput.value = record.dateKey;
+    };
+    mineSelect.addEventListener('change', fill);
+    fill();
+  }
+
+  const editDateBtn=document.getElementById('editDateBtn');
+  if(editDateBtn){
+    editDateBtn.addEventListener('click', ()=>{
+      const field=document.getElementById('editDateField');
+      field.style.display = field.style.display==='none' ? 'block' : 'none';
+    });
+  }
+
+  const confirmEditDateBtn=document.getElementById('confirmEditDateBtn');
+  if(confirmEditDateBtn){
+    confirmEditDateBtn.addEventListener('click', async ()=>{
+      const nick=myNickname();
+      const recs=await getRecords(nick);
+      const i=parseInt(document.getElementById('mineSelect').value,10);
+      const oldKey=recs[i].dateKey;
+      const newKey=document.getElementById('editDateInput').value;
+      if(!newKey){ toast('請選擇日期'); return; }
+      await updateRecordDateFor(nick, oldKey, newKey);
+      toast('日期已更新');
+      render();
+    });
+  }
+
+  const deleteRecordBtn=document.getElementById('deleteRecordBtn');
+  if(deleteRecordBtn){
+    deleteRecordBtn.addEventListener('click', async ()=>{
+      const nick=myNickname();
+      const recs=await getRecords(nick);
+      const i=parseInt(document.getElementById('mineSelect').value,10);
+      const dateKey=recs[i].dateKey;
+      if(!confirm('確定要刪除這筆紀錄嗎?此動作無法復原。')) return;
+      await deleteRecordFor(nick, dateKey);
+      toast('已刪除這筆紀錄');
+      render();
+    });
+  }
+
+  const saveImportBtn=document.getElementById('saveImportBtn');
+  if(saveImportBtn){
+    saveImportBtn.addEventListener('click', async ()=>{
+      const nick=normalizeNick(document.getElementById('importNick').value);
+      const dateKey=document.getElementById('importDate').value;
+      if(!nick){ toast('請輸入暱稱'); return; }
+      if(!dateKey){ toast('請選擇日期'); return; }
+      const record={dateLabel:toLabel(dateKey), dateKey, ranking:[...importOrder]};
+      await saveRecordFor(nick, record);
+      toast('已儲存 '+nick+' 的紀錄');
+      importOrder=[...IDS];
+      setTab('home');
+    });
+  }
+}
+
+/* ============ Battle (binary insertion sort) ============ */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function openBattle(nick){
+  const order = shuffle(IDS);
+  battleState = {
+    nick, order,
+    sorted:[order[0]],
+    i:1, lo:0, hi:0, x:null, mid:0,
+    totalEstimate: estimateComparisons(order.length),
+    done:0,
+  };
+  buildBattleDOM();
+  battleStep();
+}
+
+function estimateComparisons(n){
+  let total=0;
+  for(let k=1;k<n;k++) total += Math.ceil(Math.log2(k+1));
+  return total;
+}
+
+function buildBattleDOM(){
+  const el=document.createElement('div');
+  el.className='battle-wrap';
+  el.id='battleWrap';
+  el.innerHTML=`
+    <div class="battle-top">
+      <button class="battle-close" id="battleClose">結束</button>
+      <div class="battle-progress-track"><div class="battle-progress-fill" id="battleProgress" style="width:0%"></div></div>
+      <div class="battle-hint">你比較喜歡哪一位?</div>
+    </div>
+    <div class="battle-cards">
+      <button class="fight-card" id="cardA"><div class="fc-name" id="nameA"></div></button>
+      <div class="vs-mark">vs</div>
+      <button class="fight-card" id="cardB"><div class="fc-name" id="nameB"></div></button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  document.getElementById('battleClose').addEventListener('click', closeBattle);
+  document.getElementById('cardA').addEventListener('click', ()=>battleChoice(true));
+  document.getElementById('cardB').addEventListener('click', ()=>battleChoice(false));
+}
+
+function closeBattle(){
+  const el=document.getElementById('battleWrap');
+  if(el) el.remove();
+  battleState=null;
+}
+
+function battleStep(){
+  const s=battleState;
+  if(s.i>=s.order.length){ finishBattle(); return; }
+  if(s.x===null){
+    s.x = s.order[s.i];
+    s.lo = 0; s.hi = s.sorted.length;
+  }
+  if(s.lo>=s.hi){
+    s.sorted.splice(s.lo,0,s.x);
+    s.i++; s.x=null; s.done++;
+    updateProgress();
+    battleStep();
+    return;
+  }
+  s.mid = (s.lo+s.hi)>>1;
+  const opponent = s.sorted[s.mid];
+  document.getElementById('nameA').textContent = NAME[s.x];
+  document.getElementById('cardA').style.background = COLOR[s.x];
+  document.getElementById('nameB').textContent = NAME[opponent];
+  document.getElementById('cardB').style.background = COLOR[opponent];
+  updateProgress();
+}
+
+function updateProgress(){
+  const s=battleState;
+  const pct = Math.min(100, Math.round(s.done/s.totalEstimate*100));
+  const bar=document.getElementById('battleProgress');
+  if(bar) bar.style.width=pct+'%';
+}
+
+function battleChoice(choseX){
+  const s=battleState;
+  s.done++;
+  if(choseX){ s.hi = s.mid; } else { s.lo = s.mid+1; }
+  battleStep();
+}
+
+async function finishBattle(){
+  const s=battleState;
+  const nick=s.nick;
+  let prev=null, record;
+  try{
+    const prevRecs = await getRecords(nick);
+    prev = prevRecs.length? prevRecs[prevRecs.length-1] : null;
+    record = {dateLabel:toLabel(todayKey()), dateKey:todayKey(), ranking:s.sorted};
+    await saveRecordFor(nick, record);
+  }catch(e){
+    if(!record) record = {dateLabel:toLabel(todayKey()), dateKey:todayKey(), ranking:s.sorted};
+    toast('儲存時發生問題,結果先顯示給你看');
+  }
+  closeBattle();
+  showResult(record, prev, nick);
+}
+
+function showResult(record, prev, nick){
+  document.querySelectorAll('.battle-wrap').forEach(n=>n.remove());
+  const el=document.createElement('div');
+  el.className='battle-wrap';
+  el.id='resultWrap';
+  el.style.display='block';
+  el.style.overflowY='auto';
+  el.style.webkitOverflowScrolling='touch';
+  el.innerHTML=`
+    <div class="wrap" style="padding-top:26px;padding-bottom:40px">
+      <div class="eyebrow">${nick} · ${record.dateLabel}</div>
+      <h1 style="margin-bottom:4px">你的排名結果</h1>
+      <div class="sub" style="margin-bottom:18px;color:var(--ink-soft);font-size:14px">${prev?'與上一次相比的名次變化':'這是你的第一筆紀錄'}</div>
+      <div class="panel">${renderRecordRows(record, prev)}</div>
+      <div style="height:16px"></div>
+      <button class="btn" id="resultDoneBtn" type="button">完成</button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  const doneBtn=document.getElementById('resultDoneBtn');
+  const finish=(ev)=>{
+    if(ev) ev.preventDefault();
+    el.remove();
+    setTab('mine');
+  };
+  doneBtn.addEventListener('click', finish);
+  doneBtn.addEventListener('touchend', finish);
+}
+
+/* ============ Init ============ */
+(async function init(){
+  setupReorderDragOnce();
+  await migrateNicknameCasing();
+  await ensureSeed();
+  setTab('home');
+})();
+</script>
+</body>
+</html>
