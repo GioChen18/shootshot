@@ -271,6 +271,27 @@
     color:var(--ink-soft);
     margin:14px 0 6px;
   }
+  .battle-nudge{
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%) scale(.3);
+    background:var(--ink);color:#fff;
+    padding:16px 22px;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:700;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+    opacity:0;
+    z-index:150;
+    max-width:80vw;
+    text-align:center;
+    pointer-events:none;
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+  }
+  .battle-nudge.show{
+    transform:translate(-50%,-50%) scale(1);
+    opacity:1;
+  }
   .battle-close{
     background:none;border:none;color:var(--ink-soft);font-size:14px;
     align-self:flex-end;padding:4px 8px;
@@ -1042,6 +1063,7 @@ function buildBattleDOM(){
       <button class="battle-close" id="battleClose">結束</button>
       <div class="battle-progress-track"><div class="battle-progress-fill" id="battleProgress" style="width:0%"></div></div>
       <div class="battle-hint">你比較喜歡哪一位?</div>
+      <div class="battle-nudge" id="battleNudge"></div>
     </div>
     <div class="battle-cards">
       <button class="fight-card" id="cardA"><div class="fc-name" id="nameA"></div></button>
@@ -1055,7 +1077,66 @@ function buildBattleDOM(){
   document.getElementById('cardB').addEventListener('click', ()=>battleChoice(false));
 }
 
+const NUDGE_GENERIC = [
+  '我數到三!',
+  '3、2、1 淘汰!',
+  '不可能選這麼久欸...?',
+  '選太久了啦老師!!',
+  '加油就快結束了!'
+];
+const NUDGE_BY_MEMBER = {
+  scoups: ['選不出來?你想在這裡看到殺人魔嗎?🔪'],
+  dk: ['努娜不選我嗎?🐶💔', '您有一則來自李碩珉的訊息💬'],
+  seungkwan: ['太久了吧! Unboolievable!', 'Boo 可能這麼久', 'Boo 選我 Boo 行'],
+  joshua: ['選太久了!人要時時刻刻做好準備!'],
+  hoshi: ['Hoshi 困難...', '어이가 없어! 어이가 없어! ฅ(｡ ◝ ∀ ◜ ｡) ฅ'],
+  wonwoo: ['Baby~♪'],
+  mingyu: ['@#￥%&*&￥(聽不懂奎在說什麼但大概是要你快一點)'],
+  dino: ['사랑의 눈빛 😎✨ (李燦拉票中)'],
+  jeonghan: ['{nick} 是誰的寶寶～'],
+  woozi: ['wooa 우아 빨리 해!']
+};
+let battleNudgeTimer=null;
+let nudgeHideTimer=null;
+let lastNudgeText=null;
+function scheduleNudge(idA, idB){
+  clearNudge();
+  battleNudgeTimer = setTimeout(()=>{
+    const listA = NUDGE_BY_MEMBER[idA] || [];
+    const listB = NUDGE_BY_MEMBER[idB] || [];
+    let pool;
+    if(listA.length && listB.length){
+      pool = [...listA, ...listB];
+      if(pool.length>1 && lastNudgeText){
+        const filtered = pool.filter(t=>t!==lastNudgeText);
+        if(filtered.length) pool = filtered;
+      }
+    }else if(listA.length || listB.length){
+      pool = [...listA, ...listB];
+    }else{
+      pool = NUDGE_GENERIC;
+    }
+    const text = pool[Math.floor(Math.random()*pool.length)];
+    lastNudgeText = text;
+    const nick = (battleState && battleState.nick) ? battleState.nick : '你';
+    const displayText = text.replace(/\{nick\}/g, nick);
+    const el=document.getElementById('battleNudge');
+    if(el){
+      el.textContent = displayText;
+      el.classList.add('show');
+      nudgeHideTimer = setTimeout(()=>{ el.classList.remove('show'); }, 2200);
+    }
+  }, 7000);
+}
+function clearNudge(){
+  if(battleNudgeTimer){ clearTimeout(battleNudgeTimer); battleNudgeTimer=null; }
+  if(nudgeHideTimer){ clearTimeout(nudgeHideTimer); nudgeHideTimer=null; }
+  const el=document.getElementById('battleNudge');
+  if(el) el.classList.remove('show');
+}
+
 function closeBattle(){
+  clearNudge();
   const el=document.getElementById('battleWrap');
   if(el) el.remove();
   battleState=null;
@@ -1082,6 +1163,7 @@ function battleStep(){
   document.getElementById('nameB').textContent = NAME[opponent];
   document.getElementById('cardB').style.background = COLOR[opponent];
   updateProgress();
+  scheduleNudge(s.x, opponent);
 }
 
 function updateProgress(){
@@ -1092,6 +1174,7 @@ function updateProgress(){
 }
 
 function battleChoice(choseX){
+  clearNudge();
   const s=battleState;
   s.done++;
   if(choseX){ s.hi = s.mid; } else { s.lo = s.mid+1; }
