@@ -527,35 +527,6 @@ function myNickname(){
 function setMyNickname(n){
   try{ localStorage.setItem('str_nickname', normalizeNick(n)); }catch(e){}
 }
-async function migrateLocalToFirebase(){
-  if(!fireDb) return {ok:false, reason:'no-db'};
-  let raw;
-  try{ raw = localStorage.getItem('str_store'); }catch(e){ raw=null; }
-  if(!raw) return {ok:false, reason:'none'};
-  let parsed;
-  try{ parsed = JSON.parse(raw); }catch(e){ return {ok:false, reason:'parse'}; }
-  if(!parsed || !parsed.records) return {ok:false, reason:'empty'};
-  let count=0;
-  for(const key in parsed.records){
-    const entry = parsed.records[key];
-    const list = Array.isArray(entry) ? entry : ((entry && entry.list) || []);
-    const name = Array.isArray(entry) ? key : ((entry && entry.name) || key);
-    if(!list.length) continue;
-    const lower = normalizeNick(name);
-    const doc = await findRecordDoc(name);
-    if(doc){
-      const existing = doc.data().list || [];
-      const map={}; existing.forEach(r=>{ map[r.dateKey]=r; });
-      list.forEach(r=>{ map[r.dateKey]=r; });
-      const merged = Object.values(map).sort((a,b)=> a.dateKey<b.dateKey?-1:1);
-      await doc.ref.update({list:merged});
-    }else{
-      await fireDb.collection('records').add({nickKey:lower, name, list});
-    }
-    count++;
-  }
-  return {ok:true, count};
-}
 
 /* ============ Toast ============ */
 function toast(msg){
@@ -727,19 +698,13 @@ async function renderProfile(){
     </div>
     <button class="btn" id="saveNickBtn">儲存暱稱</button>
   `;
-  let hasLocalBackup=false;
-  try{ hasLocalBackup = !!localStorage.getItem('str_store'); }catch(e){}
-  const migrateHtml = hasLocalBackup ? `
-    <div style="height:14px"></div>
-    <button class="btn secondary" id="migrateLocalBtn">把本機舊資料上傳到 Firebase</button>
-  ` : '';
   if(!nick){
     return `
       <div class="hero"><div class="wrap">
         <div class="eyebrow">個人設定</div><h1>我的檔案</h1>
         <div class="sub">設定暱稱後就能開始排名、查看紀錄</div>
       </div></div>
-      <div class="wrap">${nickField}${migrateHtml}</div>
+      <div class="wrap">${nickField}</div>
     `;
   }
   const recs = await getRecords(nick);
@@ -772,7 +737,6 @@ async function renderProfile(){
     </div></div>
     <div class="wrap">
       ${nickField}
-      ${migrateHtml}
       <div style="height:24px"></div>
       <div class="section-title">我的紀錄</div>
       ${historyHtml}
@@ -936,22 +900,6 @@ function bindDynamic(){
       setMyNickname(n);
       toast('已儲存暱稱');
       render();
-    });
-  }
-
-  const migrateLocalBtn=document.getElementById('migrateLocalBtn');
-  if(migrateLocalBtn){
-    migrateLocalBtn.addEventListener('click', async ()=>{
-      if(!fireDb){ toast('資料庫尚未連線,請稍後再試'); return; }
-      migrateLocalBtn.disabled = true;
-      const res = await migrateLocalToFirebase();
-      migrateLocalBtn.disabled = false;
-      if(res.ok){
-        toast('已上傳 '+res.count+' 位的舊紀錄到 Firebase');
-        render();
-      }else{
-        toast('沒有找到可上傳的本機資料');
-      }
     });
   }
 
